@@ -1,0 +1,25 @@
+<!-- app/src/main/res/xml/file_paths.xml -->
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Fichiers internes (photos capturées par l'app) -->
+    <files-path
+        name="internal_files"
+        path="." />
+
+    <!-- Cache interne -->
+    <cache-path
+        name="internal_cache"
+        path="." />
+
+    <!-- Fichiers externes propres à l'app (Android 4.4+) -->
+    <external-files-path
+        name="external_files"
+        path="." />
+
+    <!-- Cache externe -->
+    <external-cache-path
+        name="external_cache"
+        path="." />
+
+</paths>

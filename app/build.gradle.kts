@@ -17,7 +17,13 @@ android {
 
         // Lire la clé Maps depuis local.properties (sécurisé)
         val mapsKey = project.findProperty("MAPS_API_KEY") as String? ?: ""
+        val baseUrl    = project.findProperty("BASE_URL")     as String? ?: ""
+        val apiKey     = project.findProperty("API_KEY")      as String? ?: ""
+
         buildConfigField("String", "MAPS_API_KEY", "\"$mapsKey\"")
+        buildConfigField("String", "BASE_URL",     "\"$baseUrl\"")
+        buildConfigField("String", "API_KEY",      "\"$apiKey\"")
+
     }
 
     buildFeatures {
@@ -62,6 +68,7 @@ dependencies {
     // ── Coroutines ────────────────────────────────────────────────
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
 
     // ── Navigation Component ─────────────────────────────────────
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
