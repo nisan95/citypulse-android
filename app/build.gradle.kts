@@ -17,7 +17,13 @@ android {
 
         // Lire la clé Maps depuis local.properties (sécurisé)
         val mapsKey = project.findProperty("MAPS_API_KEY") as String? ?: ""
+        val baseUrl    = project.findProperty("BASE_URL")     as String? ?: ""
+        val apiKey     = project.findProperty("API_KEY")      as String? ?: ""
+
         buildConfigField("String", "MAPS_API_KEY", "\"$mapsKey\"")
+        buildConfigField("String", "BASE_URL",     "\"$baseUrl\"")
+        buildConfigField("String", "API_KEY",      "\"$apiKey\"")
+
     }
 
     buildFeatures {
