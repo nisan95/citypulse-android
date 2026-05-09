@@ -8,6 +8,7 @@ android {
     compileSdk = 34 // ✅ FIX: mis à jour (34 → 35)
     namespace = "com.citypulse.app"
 
+
     defaultConfig {
         applicationId = "com.citypulse.app"
         minSdk = 26
