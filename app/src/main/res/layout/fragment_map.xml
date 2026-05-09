@@ -1,34 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/layout/fragment_map.xml -->
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <!--Conteneur de la carte Google Maps-->
-    <fragment
+
+    <!-- Carte Google Maps -->
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-    <!--FAB: recentrer sur la position actuelle-->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_my_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:contentDescription="Ma position"
-        app:srcCompat="@android:drawable/ic_menu_mylocation"
-        app:tint="@android:color/white"/>
-    <!--Indicateur de chargement (visible pendant le chargement des lieux)-->
+        android:layout_height="match_parent" />
+
+    <!-- Indicateur de chargement -->
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/progress_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:trackCornerRadius="0dp"/>
-    <!--Bandeau mode dégradé (si permission refusée)-->
+        app:trackCornerRadius="0dp" />
+
+    <!-- Bandeau mode dégradé -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_degraded"
         android:layout_width="match_parent"
@@ -37,12 +29,26 @@
         android:layout_margin="12dp"
         android:visibility="gone"
         app:cardBackgroundColor="?attr/colorErrorContainer">
+
         <TextView
             android:id="@+id/tv_degraded_message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="12dp"
             android:text="Localisation désactivée — activez-la dans les Paramètres"
-            android:textColor="?attr/colorOnErrorContainer"/>
+            android:textColor="?attr/colorOnErrorContainer" />
+
     </com.google.android.material.card.MaterialCardView>
+
+    <!-- FAB recentrage position -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_my_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:contentDescription="Ma position"
+        app:srcCompat="@android:drawable/ic_menu_mylocation"
+        app:tint="@android:color/white" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
