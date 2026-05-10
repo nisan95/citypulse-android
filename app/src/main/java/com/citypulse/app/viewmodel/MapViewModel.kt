@@ -9,7 +9,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class MapViewModel(private val placeRepository: PlaceRepository) : BaseViewModel() {
+class MapViewModel(
+    private val locationViewModel: LocationViewModel,
+    private val placeRepository: PlaceRepository
+) : BaseViewModel() {
 
     private val _uiState = MutableStateFlow<MapUiState>(MapUiState.Loading)
     val uiState: StateFlow<MapUiState> = _uiState.asStateFlow()

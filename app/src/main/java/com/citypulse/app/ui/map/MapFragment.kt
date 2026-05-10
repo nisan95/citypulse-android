@@ -28,9 +28,15 @@ class MapFragment:Fragment(),OnMapReadyCallback{
         LocationViewModelFactory(FusedLocationRepository(requireContext().applicationContext))
     }
 //MapViewModelpropreàcetécran(listedeslieuxsurlacarte)
-    private val mapViewModel:MapViewModel by viewModels{
-        MapViewModelFactory(FakePlaceRepository())
-    }
+   // private val mapViewModel:MapViewModel by viewModels{
+    //    MapViewModelFactory(FakePlaceRepository())
+  //  }
+     private val mapViewModel: MapViewModel by viewModels {
+         MapViewModelFactory(
+        locationViewModel,
+        requireContext().applicationContext // Se sa ki te manke a ✅
+    )
+}
     private var googleMap:GoogleMap?=null
     private val markers=mutableMapOf<String,Marker>() //placeId→Marker
     override fun onCreateView(inflater:LayoutInflater,container:ViewGroup?,state:Bundle?):View{
