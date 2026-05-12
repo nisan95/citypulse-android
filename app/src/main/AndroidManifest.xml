@@ -60,7 +60,7 @@
             android:name=".service.LocationForegroundService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceTypes="location" />
+            android:foregroundServiceType="location" />
 
         <!-- ── FileProvider pour le partage de fichiers ── -->
         <provider
