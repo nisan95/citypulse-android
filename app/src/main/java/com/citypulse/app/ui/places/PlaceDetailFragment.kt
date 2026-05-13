@@ -23,6 +23,7 @@ import com.citypulse.app.viewmodel.PlaceDetailViewModelFactory
 import com.citypulse.app.data.local.FusedLocationRepository
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
+import com.citypulse.app.util.SharingHelper
 class PlaceDetailFragment:Fragment(){
     private var _binding:FragmentPlaceDetailBinding?=null
     private val binding get() = _binding!!
@@ -150,8 +151,9 @@ class PlaceDetailFragment:Fragment(){
                 Snackbar.make(binding.root,"Retiredesfavoris",Snackbar.LENGTH_SHORT).show()
             is PlaceDetailEvent.NoteSaved->
                 Snackbar.make(binding.root,"Notesauvegardee",Snackbar.LENGTH_SHORT).show()
-            is PlaceDetailEvent.ShareRequested->
-                sharePlace(event.text)
+            is PlaceDetailEvent.ShareRequested->{
+                SharingHelper.shareText(requireContext(),event.text)
+            }
             is PlaceDetailEvent.ShowError->
                 Snackbar.make(binding.root,event.message,Snackbar.LENGTH_LONG).show()
         }

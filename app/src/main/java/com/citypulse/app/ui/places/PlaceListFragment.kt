@@ -2,6 +2,7 @@ package com.citypulse.app.ui.places
 
 import android.os.Bundle
 import android.view.*
+import android.widget.EditText
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -94,8 +95,16 @@ class PlaceListFragment : Fragment() {
     }
 
     private fun setupSearch() {
-        binding.searchBar.editText?.addTextChangedListener { editable ->
-            viewModel.onSearchQueryChanged(editable?.toString() ?: "")
+        try {
+            val textView = binding.searchBar.findViewById<EditText>(
+                com.google.android.material.R.id.search_src_text
+            )
+            textView?.addTextChangedListener { editable ->
+                viewModel.onSearchQueryChanged(editable?.toString() ?: "")
+            }
+        } catch (e: Exception) {
+            // Fallback si la vue n'existe pas
+            android.util.Log.e("SEARCH", "Erreur lors de la configuration du search", e)
         }
     }
 

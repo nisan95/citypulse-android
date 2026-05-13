@@ -20,6 +20,7 @@ import com.google.android.gms.maps.model.*
 import com.citypulse.app.viewmodel.MapViewModelFactory
 import com.citypulse.app.viewmodel.MapViewModel
 import kotlinx.coroutines.launch
+import com.citypulse.app.R
 class MapFragment:Fragment(),OnMapReadyCallback{
     private var _binding:FragmentMapBinding?=null
     private val binding get()=_binding!!
@@ -52,8 +53,8 @@ class MapFragment:Fragment(),OnMapReadyCallback{
 // ── Initialisationdelacarte ─────────────────────────────────────
     private fun initMap(){
         val mapFragment=childFragmentManager
-            .findFragmentById(com.citypulse.app.R.id.map)as SupportMapFragment
-                mapFragment.getMapAsync(this) //AppelleonMapReadyquandprêt
+            .findFragmentById(R.id.map)as SupportMapFragment
+        mapFragment.getMapAsync(this) //AppelleonMapReadyquandprêt
     }
 //OnMapReadyCallback—appeléquandlacarteestinitialisée
     override fun onMapReady(map:GoogleMap){
