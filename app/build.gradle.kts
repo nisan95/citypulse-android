@@ -25,6 +25,19 @@ android {
         buildConfigField("String", "BASE_URL",     "\"$baseUrl\"")
         buildConfigField("String", "API_KEY",      "\"$apiKey\"")
 
+        signingConfigs {
+            create("release") {
+                val keystorePath = project.findProperty("KEYSTORE_PATH") as String? ?: ""
+                val keystorePass = project.findProperty("KEYSTORE_PASSWORD") as String? ?: ""
+                val keyAlias = project.findProperty("KEY_ALIAS") as String? ?: ""
+                val keyPass = project.findProperty("KEY_PASSWORD") as String? ?: ""
+                storeFile = if (keystorePath.isNotEmpty()) file(keystorePath) else null
+                storePassword = keystorePass
+                this.keyAlias = keyAlias
+                keyPassword = keyPass
+            }
+        }
+
     }
 
     buildFeatures {
