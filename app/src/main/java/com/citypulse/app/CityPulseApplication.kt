@@ -3,7 +3,7 @@ package com.citypulse.app
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.os.Build
+
 /**
  * Classe Application de CityPulse. * Point d'entrée global de l'app — initialisations singleton ici. * Déclarée dans AndroidManifest.xml par P3 (android:name). */
 class CityPulseApplication : Application() {

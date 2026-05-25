@@ -9,12 +9,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <!--BarrederechercheMaterial3-->
-        <com.google.android.material.search.SearchBar
-            android:id="@+id/search_bar"
+        <!-- Remplacer l'ancienne SearchBar par ceci -->
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Rechercher un lieu..."
-            app:navigationIcon="@null"/>
+            android:padding="8dp"
+            android:background="?attr/colorSurface"
+            app:queryHint="Rechercher un lieu..."
+            app:iconifiedByDefault="false"/>
         <!--Chipsdefiltrageparcatégorie-->
         <HorizontalScrollView
             android:layout_width="match_parent"

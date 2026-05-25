@@ -95,17 +95,16 @@ class PlaceListFragment : Fragment() {
     }
 
     private fun setupSearch() {
-        try {
-            val textView = binding.searchBar.findViewById<EditText>(
-                com.google.android.material.R.id.search_src_text
-            )
-            textView?.addTextChangedListener { editable ->
-                viewModel.onSearchQueryChanged(editable?.toString() ?: "")
+        binding.searchView.setOnQueryTextListener(
+            object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean = false
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    viewModel.onSearchQueryChanged(newText ?: "")
+                    return true
+                }
             }
-        } catch (e: Exception) {
-            // Fallback si la vue n'existe pas
-            android.util.Log.e("SEARCH", "Erreur lors de la configuration du search", e)
-        }
+        )
     }
 
     private fun observeViewModel() {

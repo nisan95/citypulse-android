@@ -66,40 +66,58 @@ class PermissionManager(private val activity: ComponentActivity) {
         }
     }
 // ── Méthode générique interne ──────────────────────────────────────
-    private fun requestPermissions(
-        permissions: Array<String>,
-        rationaleTitle: String,
-        rationaleMessage: String,
-        onGranted: () -> Unit,
-        onDenied: () -> Unit
-    ) {
-        this.onGranted = onGranted
-        this.onDenied = onDenied
-        val missing = permissions.filter { !isGranted(it) }
-        when {
-            missing.isEmpty() -> onGranted() // Toutes déjà accordées
-            missing.any { activity.shouldShowRequestPermissionRationale(it) } ->
-                showDialog(rationaleTitle, rationaleMessage,
-                    onConfirm = { multiLauncher.launch(missing.toTypedArray()) },
-                    onCancel = onDenied
-                )
-            else -> {
-// Vérifier le refus définitif (coché 'Ne plus demander')
-                val allPreviouslyDenied = missing.all { perm ->
-                    activity.getSharedPreferences("perms", 0)
-                        .getBoolean(perm, false)
-                }
-                if (allPreviouslyDenied) showSettingsDialog()
-                else {
-                    missing.forEach { perm ->
-                        activity.getSharedPreferences("perms", 0)
-                            .edit().putBoolean(perm, true).apply()
-                    }
-                    multiLauncher.launch(missing.toTypedArray())
-                }
+private fun requestPermissions(
+    permissions: Array<String>,
+    rationaleTitle: String,
+    rationaleMessage: String,
+    onGranted: () -> Unit,
+    onDenied: () -> Unit
+) {
+    this.onGranted = onGranted
+    this.onDenied  = onDenied
+
+    val missing = permissions.filter { !isGranted(it) }
+
+    when {
+        // Toutes accordées
+        missing.isEmpty() -> onGranted()
+
+        // Au moins une avec rationale -> expliquer avant de demander
+        missing.any { activity.shouldShowRequestPermissionRationale(it) } -> {
+            showDialog(
+                rationaleTitle,
+                rationaleMessage,
+                onConfirm = { multiLauncher.launch(missing.toTypedArray()) },
+                onCancel  = onDenied
+            )
+        }
+
+        // Vérifier si déjà refusé définitivement
+        // shouldShowRequestPermissionRationale == false ET déjà demandé
+        // = refus définitif -> envoyer dans les paramètres
+        missing.all { perm ->
+            val alreadyRequested = activity
+                .getSharedPreferences("perm_prefs", android.content.Context.MODE_PRIVATE)
+                .getBoolean("asked_$perm", false)
+            !activity.shouldShowRequestPermissionRationale(perm) && alreadyRequested
+        } -> {
+            // Refus définitif détecté -> ouvrir les paramètres
+            showSettingsDialog()
+        }
+
+        // Première demande -> marquer comme demandé et lancer
+        else -> {
+            missing.forEach { perm ->
+                activity.getSharedPreferences("perm_prefs",
+                    android.content.Context.MODE_PRIVATE)
+                    .edit()
+                    .putBoolean("asked_$perm", true)
+                    .apply()
             }
+            multiLauncher.launch(missing.toTypedArray())
         }
     }
+}
 
     private fun isGranted(perm: String) =
         ContextCompat.checkSelfPermission(activity, perm) == PackageManager.PERMISSION_GRANTED

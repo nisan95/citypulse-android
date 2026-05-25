@@ -1,24 +1,20 @@
 package com.citypulse.app.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
-import androidx.lifecycle.lifecycleScope
-import com.citypulse.app.databinding.ActivityMainBinding
-import com.citypulse.app.util.PermissionManager
-import com.citypulse.app.util.Result
-
-import com.citypulse.app.data.remote.NetworkModule
-
-import com.citypulse.app.data.remote.PlaceApiRepository
-
-import com.citypulse.app.ui.map.MapFragment
-
-import kotlinx.coroutines.launch
 import com.citypulse.app.R
+import com.citypulse.app.databinding.ActivityMainBinding
+import com.citypulse.app.ui.favorites.FavoritesFragment
+import com.citypulse.app.ui.map.MapFragment
+import com.citypulse.app.ui.places.PlaceListFragment
+import com.citypulse.app.ui.places.PlaceDetailFragment
+import com.citypulse.app.util.PermissionManager
+
 class MainActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityMainBinding
     private lateinit var permissionManager: PermissionManager
 
@@ -29,39 +25,86 @@ class MainActivity : AppCompatActivity() {
 
         permissionManager = PermissionManager(this)
 
-        // Si c'est la première création (pas de rotation d'écran)
+        // Charger la carte au démarrage (seulement si pas de rotation)
         if (savedInstanceState == null) {
-            // Afficher le fragment de carte au démarrage
-            showInitialFragment()
+            loadFragment(MapFragment())
         }
 
-        // Demander la localisation au démarrage
-        requestLocationPermissions()
+        // Configurer la navigation du bas
+        setupBottomNavigation()
+
+        // Demander les permissions GPS au démarrage
+        // ✅ On appelle directement requestLocationPermissions() sans hasLocationPermissions()
+        requestLocationPermissions(
+            onGranted = {
+                com.citypulse.app.service.LocationServiceManager.start(this)
+            }
+        )
+
+
     }
 
-    private fun showInitialFragment() {
+    // ── Navigation ────────────────────────────────────────────────────
+
+    private fun setupBottomNavigation() {
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_map      -> { loadFragment(MapFragment()); true }
+                R.id.nav_list     -> { loadFragment(PlaceListFragment()); true }
+                R.id.nav_favorites-> { loadFragment(FavoritesFragment()); true }
+                else              -> false
+            }
+        }
+    }
+
+    private fun loadFragment(fragment: Fragment) {
         supportFragmentManager.commit {
-            replace(R.id.fragment_container, MapFragment())
+            replace(R.id.fragment_container, fragment)
         }
     }
 
-    fun requestLocationPermissions(onGranted: () -> Unit = {}, onDenied: () -> Unit = {}) {
+    /**
+     * Navigation vers PlaceDetailFragment depuis MapFragment.
+     * Utilise addToBackStack pour permettre le retour arrière.
+     */
+    fun navigateToPlaceDetail(placeId: String) {
+        val fragment = PlaceDetailFragment.newInstance(placeId)
+        supportFragmentManager.commit {
+            replace(R.id.fragment_container, fragment)
+            addToBackStack(null) // ✅ Bouton Back revient à la carte
+        }
+    }
+
+    // ── Permissions ───────────────────────────────────────────────────
+
+    fun requestLocationPermissions(
+        onGranted: () -> Unit = {},
+        onDenied: () -> Unit = {}
+    ) {
         permissionManager.requestLocationPermissions(
             onGranted = {
-                // Démarrer le service de localisation en arrière-plan
                 com.citypulse.app.service.LocationServiceManager.start(this)
                 onGranted()
             },
             onDenied = {
-                Toast.makeText(this, "Mode dégradé.", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    this,
+                    "Mode dégradé : carte désactivée sans localisation.",
+                    Toast.LENGTH_LONG
+                ).show()
                 onDenied()
             }
         )
     }
 
-    fun requestNotificationPermission(onGranted: () -> Unit = {}, onDenied: () -> Unit = {}) {
+    fun requestNotificationPermission(
+        onGranted: () -> Unit = {},
+        onDenied: () -> Unit = {}
+    ) {
         permissionManager.requestNotificationPermission(onGranted, onDenied)
     }
+
+    // ── Cycle de vie ──────────────────────────────────────────────────
 
     override fun onDestroy() {
         super.onDestroy()

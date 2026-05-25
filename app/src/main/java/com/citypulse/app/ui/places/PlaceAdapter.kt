@@ -26,7 +26,7 @@ private val onFavoriteClick:(Place)->Unit
         fun bind(place:Place){
 //Textes
             binding.tvPlaceName.text =place.name
-            binding.tvPlaceAddress.text=place.address.ifBlank{"Adressenondisponible"}
+            binding.tvPlaceAddress.text=place.address.ifBlank{"Adresse non disponible"}
             binding.tvDistance.text =place.formattedDistance()?:""
 //Chipcatégorie
             binding.chipCategory.text="${place.category.icon}${place.category.label}"

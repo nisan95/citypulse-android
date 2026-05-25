@@ -30,7 +30,7 @@ class PlaceDetailFragment:Fragment(){
 //IDdulieupasseenargumentparleFragmentappelant
     private val placeId:String by lazy{
         arguments?.getString(ARG_PLACE_ID)
-            ?:error("PlaceDetailFragmentrequiertunplaceIddanslesarguments")
+            ?:error("PlaceDetailFragment requiert un placeId dans les arguments")
     }
     private val locationViewModel:LocationViewModel by activityViewModels{
         LocationViewModelFactory(FusedLocationRepository(requireContext().applicationContext))
@@ -119,7 +119,7 @@ class PlaceDetailFragment:Fragment(){
     }
     private fun bindPlace(place:Place,distance:String?,savedNote:String){
         binding.tvPlaceName.text =place.name
-        binding.tvPlaceAddress.text=place.address.ifBlank{"Adressenondisponible"}
+        binding.tvPlaceAddress.text=place.address.ifBlank{"Adresse non disponible"}
         binding.tvCoordinates.text ="GPS:%.6f,%.6f".format(place.latitude,place.longitude)
         binding.tvDistance.text =distance?:""
         binding.chipCategory.text ="${place.category.icon}${place.category.label}"
@@ -146,11 +146,11 @@ class PlaceDetailFragment:Fragment(){
     private fun handleEvent(event:PlaceDetailEvent){
         when(event){
             is PlaceDetailEvent.FavoriteAdded->
-                Snackbar.make(binding.root,"Ajouteauxfavoris",Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(binding.root,"Ajoute aux favoris",Snackbar.LENGTH_SHORT).show()
             is PlaceDetailEvent.FavoriteRemoved->
-                Snackbar.make(binding.root,"Retiredesfavoris",Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(binding.root,"Retire des favoris",Snackbar.LENGTH_SHORT).show()
             is PlaceDetailEvent.NoteSaved->
-                Snackbar.make(binding.root,"Notesauvegardee",Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(binding.root,"Note sauvegardee",Snackbar.LENGTH_SHORT).show()
             is PlaceDetailEvent.ShareRequested->{
                 SharingHelper.shareText(requireContext(),event.text)
             }
@@ -175,7 +175,7 @@ class PlaceDetailFragment:Fragment(){
             type="text/plain"
             putExtra(Intent.EXTRA_TEXT,text)
         }
-        startActivity(Intent.createChooser(intent,"Partagervia"))
+        startActivity(Intent.createChooser(intent,"Partager via"))
     }
     companion object{
         const val ARG_PLACE_ID="place_id"

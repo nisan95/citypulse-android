@@ -1,3 +1,9 @@
+import java.util.Properties
+
+val localProps = Properties().apply {
+    rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) }
+}
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -16,9 +22,9 @@ android {
         versionName = "1.0"
 
         // Clés sécurisées depuis local.properties
-        val mapsKey = project.findProperty("MAPS_API_KEY") as String? ?: ""
-        val baseUrl = project.findProperty("BASE_URL") as String? ?: ""
-        val apiKey = project.findProperty("API_KEY") as String? ?: ""
+        val mapsKey = localProps.getProperty("MAPS_API_KEY", "")
+        val baseUrl = localProps.getProperty("BASE_URL", "")
+        val apiKey = localProps.getProperty("API_KEY", "")
 
         buildConfigField("String", "MAPS_API_KEY", "\"$mapsKey\"")
         buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
@@ -31,17 +37,7 @@ android {
         buildConfig = true
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            isShrinkResources = true
 
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
@@ -49,6 +45,35 @@ android {
     }
     kotlinOptions {
         jvmTarget = "21"
+    }
+    signingConfigs {
+        create("release") {
+            // ✅ Réutiliser localProps déjà chargé en haut du bloc Android
+            val keystorePath = localProps.getProperty("KEYSTORE_PATH", "")
+            val keystorePass = localProps.getProperty("KEYSTORE_PASSWORD", "")
+            val alias = localProps.getProperty("KEY_ALIAS", "")
+            val keyPass = localProps.getProperty("KEY_PASSWORD", "")
+
+            storeFile = if (keystorePath.isNotEmpty()) file(keystorePath) else null
+            storePassword = keystorePass
+            keyAlias = alias
+            keyPassword = keyPass
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug {
+            applicationIdSuffix = ".debug"
+            isDebuggable = true
+        }
     }
 }
 
